@@ -1,0 +1,11 @@
+25a26,29
+> #ifdef __EMX__
+> #define INCL_DOSFILEMGR
+> #include <os2.h>
+> #endif
+83a88,90
+> #ifdef __EMX__
+>     nfds = FD_SETSIZE;
+> #else
+84a92
+> #endif

@@ -1,0 +1,66 @@
+
+                             W H A T ' S   N E W
+
+                                  XJDIC V2.3
+                                  ==========
+
+These are just a few notes on changes introduced in V2.3 of xjdic.  
+Make sure you  read  the xjdic23.install document,  and preferably 
+also the xjdic23.inf document before installing and running V2.3. 
+
+These notes assume some familiarity with earlier versions of xjdic.
+
+V2.2 of xjdic was a relatively minor upgrade mainly to enable handling of 
+the kanji of the JIS X 0212-1990 set, and to introduce the global 
+(simultaneous) search of several dictionaries.
+
+V2.3 introduced further support for the JIS X 0212-1990 set by enabling
+single kanji dictionary to be used which contains both the JIS X 0208
+and JIS X 0212 kanji.
+
+Also changed were the way in which dictionary, etc. files were handled,
+in particular by enabling the control-file to be specified in the 
+command-line, and introducing the "dicdir" directory in the control-file
+to allow all the data and dictionary files to be in the one directory.
+
+A *real* man page is included for the first time.
+
+Some other minor features were introduced: 
+- upward stepping of dictionary files 
+- the clipboard option. 
+- memory-mapped I/O as a compile option.
+
+The layout of the dictionary display was also revised, and the Help 
+screen redesigned. Some bugs which were impeding operation on some 
+platforms were removed.
+
+The key points of introduced in V2.3 are: 
+                       
+A. Adjusting the (kanjidic) kanji dictionary support so that it can 
+operate on a file containing *both* the KANJIDIC and KANJD212 files.
+
+B. Reformatting the output display, so that the matched key appears in
+reverse video instead of being extracted to the front of the line.
+
+C. Allowing the set of dictionaries to be stepped through backwards
+instead of just forwards.
+
+D. Introducing the "clipboard" option in which search keys come from a
+file.
+
+E. Reformatted "help" page.
+
+F. control-file (.xjdicrc) location on command-line
+
+G. directive in the control file to locate dictionary & data files.
+
+H. Compile-time option of enabling memory-mapped I/O, as well as the
+previous built-in demand-paged method.
+
+I. Some bug fixes, particularly removing the problem of segfaults with
+some libraries when there was no .xjdicrc file.
+
+J. A "man" page has been developed from the .inf file.
+
+Jim Breen 
+September 1998

@@ -1,0 +1,1292 @@
+
+       X J D I C   V 2 . 4    /     X J D S E R V E R    V 2 . 4
+ 
+                 (Copyright: J.W. Breen - 2003)
+
+
+          INDEX
+
+      A. INTRODUCTION 
+      B. INVOCATION
+      C. MODES OF OPERATION
+      D. ENTERING SEARCH KEYS 
+      E. EXITING 
+      F. ON-LINE HELP 
+      G. ROMAJI-TO-KANA CONVERSION 
+      H. JAPANESE CODES 
+      I. DICTIONARIES 
+      J. MULTIPLE DICTIONARIES 
+      K. FILTERS 
+      L. LOGGING 
+      M. CONTROL FILE 
+      N. OTHER FILES 
+      O. INSTALLATION 
+      P. AUTHOR'S COMMENT 
+      Q. REVISIONS
+      
+          APPENDICES
+
+      A. COMMAND SUMMARY
+      B. XJDSERVER PROTOCOL                         
+      C. JIS X 0212-1990 KANJI
+
+
+A. INTRODUCTION 
+
+XJDIC is an  electronic  Japanese-English  dictionary  program  designed  to 
+operate  in  the  X11 window environment.  In particular,  it must run in an 
+"xterm" environment which has Japanese language support such as provided  by 
+"kterm" or internationalized xterm, aixterm, etc. 
+
+It  is based on JDIC and JREADER which were developed to run under MS-DOS on 
+IBM PCs or clones. 
+
+XJDIC functions as: 
+
+(a) an English to  Japanese  dictionary  (eiwa  jiten),  searching  for  and 
+displaying entries for key-words entered in English; 
+
+(b)  a  Japanese  to  English  dictionary  (waei  jiten),  searching for and 
+displaying entries for keywords  or  phrases  entered  in  Japanese  (kanji, 
+hiragana or katakana); 
+
+(c)  a  Japanese-English  Character  dictionary  (kanei  jiten),  capable of 
+selecting kanji characters by JIS code, radical, stroke count,  Nelson Index 
+number or reading, and displaying compounds containing that kanji. 
+
+XJDIC  is typically run in a window of its own.  The user can then use it as 
+a free-standing on-line dictionary.  It can also be  used  as  an  accessory 
+when  reading  or  writing  text  in  another window (e.g.  reading the "fj" 
+Japanese news groups.) Strings of text,  either English or Japanese,  can be 
+moved to and from XJDIC using X11's mouse "cut-and-paste" operations. 
+
+From  V2.0,  XJDIC is available in two forms:  a stand-alone program,  and a 
+client/server pair of programs.  In the latter case,  XJDIC becomes a client 
+sending dictionary search requests to another program:  XJDSERVER, which may 
+be on the same system,  or may be on another host  machine  altogether.  One 
+copy  of  XJDSERVER  may  support  any  number  of copies of XJDIC.  See the 
+XJDIC24.INSTALL file for more details. 
+         
+The source code and documentation of XJDIC are  hereby  released  under  the 
+terms of the GNU General Public License (GPL).  All usage of this program is 
+at the user's risk, and there is no warranty on its performance.  Copies may 
+be distributed by any means which conforms to the terms of the GPL. 
+
+The  EDICT and KANJIDIC files are also freely available,  but are covered by 
+their own copyright and licence statements, and are not under the GPL. 
+
+All the Japanese displayed by XJDIC is in kana and kanji,  so if you  cannot 
+read  at least hiragana and katakana,  this is not the program for you.  The 
+author has no intention whatsoever of producing a  version  using  romanized 
+Japanese. 
+
+B. INVOCATION 
+
+The invocation of XJDIC is: 
+
+    xjdic <options> 
+
+The command line options are: 
+
+[SA: Stand-alone, CL: Client, SV: Server] 
+
+-d dictionary-path_and_filename     [SA,SV]
+
+the  path and file-name of the Japanese-English dictionary files to use.  If 
+more than one dictionary file is to be used,  you  must  use  multiple  "-d" 
+options.  If this option is not present,  the single dictionary file "EDICT" 
+will be used,  along with the index file "EDICT.XJDX".  These must be either 
+in  the  current  directory,   or  the  directory  specified  in  the  XJDIC 
+environment variable.  The dictionary can also be specified in the  .xjdicrc 
+file (see below). 
+
+-k kanji_dictionary-path_and_filename     [SA,SV]
+
+the path and file-name of the Kanji dictionary to use.  If not present,  the 
+dictionary  file  "KANJIDIC"  will  be  used,  along  with  the  index  file 
+"KANJIDIC.XJDX".  These  must  be  either  in the current directory,  or the 
+directory specified in the XJDIC environment variable.  The  dictionary  can 
+also be specified in the .xjdicrc file (see below). 
+
+-j Japanese_output_code_type (j, e or s)      [SA,CL]
+
+XJDIC  uses  "New-JIS"  codes  as  its default output method.  This is quite 
+acceptable if you are running under kterm.  Some  other  environments  which 
+are internationalized (e.g. aixterm) can only handle EUC or Shift-JIS codes. 
+XJDIC  can  be  made  to  output  in  these  codes  by  the "-j e" or "-j s" 
+command-line options. "-j j" sets it to New-JIS (the default). 
+
+-v      [SA,CL]
+
+To disable the verb de-inflection function. 
+
+-K      [SV]
+
+To prevent  the  server  from  establishing  itself  as  a  daemon,  i.e.  a 
+background  program not dependent on a terminal.  (This option is mainly for 
+debugging purposes.) 
+
+-P nnnnn      [CL,SV]
+
+To instruct the client/server version to use UDP port nnnnn,  instead of the 
+default  port  (47512).  (This  port  number can alternatively be set in the 
+.xjdicrc file.) 
+
+-S server_address      [CL]
+
+To instruct the client that the server is  to  be  found  at  the  specified 
+network  address.  (This  address  can  alternatively be set in the .xjdicrc 
+file.) 
+
+-E	[CL,SA]
+
+To instruct the program that it is in EUC mode, and refrain from interpreting
+the 3-byte kanji of the JIS X 0212 set, which starts with a hex 8F, as 
+Shift-JIS.
+
+-h 	[CL,SV,SA]
+
+this option results in the display  of  a  simple  summary  of  command-line 
+options. 
+
+-c	[CL,SV,SA]
+
+To specify the path and name of a control file to be used instead of the
+default ".xjdicrc" file.
+
+-C	[CL,SA]
+
+To specify the name of a clipboard file to use instead of the default
+"clipboard".
+
+-V	[CL,SA]
+
+To disable the use of reverse-video in the display of matches.
+
+C. MODES OF OPERATION
+
+As  described  below,  XJDIC's  default  prompt  is  set  to  receive search 
+keywords. It will also react to certain non-alphabetic keystrokes, and treat 
+them as instructions to change an operating  mode,  or  to  carry  out  some 
+special  function.  These commands are described below as they appear in the 
+text, and a summary of these commands is at Appendix A. 
+
+D. ENTERING SEARCH KEYS 
+
+(a) Japanese-English Dictionary 
+
+XJDIC  operates  in  two  modes:   Japanese-English  Dictionary,  and  Kanji 
+Dictionary. 
+
+In  the case of the Japanese-English Dictionary,  search keys are entered in 
+response to the "XJDIC [name] SEARCH KEY:" prompt. The "[name]" is either the
+name of the current dictionary file, or "[GLOBAL]" in the case of the global
+searching option.  Search keys can be either in English  (typically entered 
+from the keyboard) or kana and/or kanji (entered via a "front-end" program 
+such as kinput2,  entered  using  XJDIC's  internal romaji/kana  converter  
+(see  below), or cut from another window using X11 mouse operations.) 
+
+To  invoke the romaji/kana converter, you have two options:
+
+(i) begin a search key with either "@" for hiragana  or  "#"  for  katakana. 
+Then  as you type the key,  it will be converted to the selected kana.  (See 
+below for details of the romaji-to-kana conversion.) 
+
+(ii) you can set the program to assume that input will be in kana (hiragana), 
+either by toggling the "kana input mode" on with  the  "&"  command,  or  by 
+setting  the "kanamode" directive in the .xjdicrc file.  In this case if you 
+want to enter katakana,  you still must use the "#" prefix.  You  can  still 
+input  English  search  keys without changing mode by prefixing the key with 
+the letter "l" to signal a temporary reversion to non-kana mode. 
+                                            
+A multi-line display will be produced of all the  dictionary  entries  which 
+contain matches with the search key.  The display format is: 
+
+  match-length: KANJI (yomikata) English_1; English_2; etc 
+
+with the matched key in reverse-video. "Match-length" indicates the number of 
+characters  in  the  key-word  which matched entries in the dictionary file. 
+XJDIC will find the longest possible match,  unless the exact_match mode  is 
+engaged  using  the  "["  command,  in which case only entries which exactly 
+match the keyword will be  displayed. The use of reverse-video can be disabled
+at startup by the "-V" command-line option, and toggled during operation by
+the "}" command.  
+
+(An  alternative  display  format  is available,  in  which  the "raw" EDICT 
+format is used.  This mode,  which is most useful when carrying out dictionary 
+maintenance,  is toggled  with  the "|" command.) 
+
+A  line  is  only  displayed  once  per search,  regardless of the number of 
+matches which occur within it. 
+
+If the search resulted in more entries than will fit on a screen,  a further 
+prompt  occurs  at  the  bottom  of  the  screen  giving  you  the option of 
+requesting the  next  screen-full.  Once  all  the  matches  on  a  key  are 
+exhausted,  the  keyword  is shortened by one character,  and the display is 
+continued. 
+
+The matching of kana keys is insensitive to whether they are in katakana  or 
+hiragana,  however  note that the convention for long vowels differs between 
+Japanese words and gairaigo.  Matching of English keywords is insensitive to 
+case. 
+
+The  display  is  in  "dictionary"  order  for  the  words   matched,   i.e. 
+alphabetical  for  the  English search,  and JIS code order for the Japanese 
+search.  JIS order is very  close  to  the  "gojuuon"  kana  order  used  in 
+Japanese dictionaries except that it separates the syllables with the nigori 
+and maru diacritic marks. 
+                                                                        
+If the word being used to search the dictionary consists of a kanji followed 
+by  two  or  more  hiragana,  the  kana  is  matched against common verb and 
+adjective inflections.  If a match is found,  the search is  initially  made 
+for  the  plain or "dictionary form" of the word.  The possible combinations 
+of inflections or conjugations is taken from the VCONJ file. 
+
+The verb de-inflection function can be toggled on and off with the ":" key. 
+
+It is possible to set up a number of "filters"  which  either  restrict  the 
+display  to  dictionary entries which contain certain strings of characters, 
+or suppress the display of entries with certain  strings.  This  feature  is 
+useful  if  the  user wants to avoid the large number of proper nouns in the 
+dictionary.  See the section FILTERS below for details of how to set up such 
+filter strings.  Individual filters can be activated  or  deactivated  using 
+the ";" command.  
+
+In addition,  it is possible to set or clear a "one-off" filter string which 
+must be present for a line to be  displayed.  This  is  done  with  the  "'" 
+(single  right  quote) command.  This string can be English,  kana or kanji. 
+Thus,  for example,  it is possible to  search  for  entries  which  have  a 
+particular  kanji  with  a  specified  reading by setting the reading as the 
+filter and searching for the kanji. 
+
+(Note that some caution should is necessary when using filters, particularly 
+with a search key which will  result  in  many  potential  matches,  as  the 
+program  can  run very slowly as it examines the entries for the presence or 
+absence of the filter.) 
+
+As a further option,  it is possible to restrict a  search  for  an  English 
+keyword to ones which have been flagged in the dictionary file as being of a 
+higher  priority.  This  flagging is done by prepending a "@" to such words. 
+The "priority search" mode is toggled  on  and  off  by  the  "+"  key.  The 
+display of "priority" English words is done in reverse-video. 
+
+Note  that it is possible to use multiple dictionaries,  as specified in the 
+command-line or .xjdicrc file,  and to select which dictionary to use  in  a 
+search  by  using  the  "=", "^" or "_"  commands.  See  the  section  below 
+on alternative dictionaries. 
+
+Since V2.3, XJDIC has a "clipboard" option, invoked by the "{" command.
+When in clipboard mode, XJDIC reads a file called "clipboard" (default,
+another file may be specified in the command-line or control file), and
+if this file has changed since it was last read, the first string in the
+file is used as the key. XJDIC does not respond at all to the keyboard
+whilst in this mode; to exit from the mode, the clipboard file must
+contain the string "quit".
+
+(b) Kanji Dictionaries
+
+XJDIC has the capability to select individual kanji characters by a  variety 
+of  techniques,  and  to  display  information  about  that  character.  The 
+character can then be "cut" into the main dictionary search to  display  all 
+dictionary entries starting with or containing that particular character. 
+
+The  main Kanji  Dictionary  used by XJDIC is the KANJIDIC file,  some 
+details of which are included below. This file supports the 6,355 kanji of 
+the JIS X 0208-1990 set. In addition, the KANJD212 file is available for the
+5,801 supplementary kanji in the JIS X 0212-1990 set.  The two files can
+be combined and used as a single file.
+
+The search of the Kanji Dictionary  is  triggered  by  entering  "\",  which 
+causes  the  "KANJI  LOOKUP TYPE:" prompt to appear.  The kanji lookup types 
+are specified by entering a further single character: 
+
+J - by its "JIS" code.  This is the standard 4-digit hexadecimal  code  used 
+to  identify  each Japanese character.  Alternatively the 4-digit Kuten code 
+may be entered preceded by a "k",  and the 4-digit  Shift-JIS  code  may  be 
+entered preceded by a "s". (If you have the KANJD212 entries in your kanji
+file, you can specify these by placing an `h' in front of the JIS or
+Kuten code. JIS X 0212 kanji do not have Shift-JIS codes.)
+
+C  - by one of the identifying codes within the Kanji Dictionary.  The codes 
+presently in KANJIDIC are: 
+
+        Nnnnn - the "Nelson" index  number.  This  refers  the  kanji  index 
+        numbers  used  by the late Professor Andrew N.  Nelson in his famous 
+        "Japanese-English Character Dictionary",  published by Tuttle.  Over 
+        5000 kanji in XJDIC's files have Nelson numbers. (Now known as
+        the "Classic" Nelson".)
+
+        Vnnnn - the "New Nelson" index number, from the 1997 and later
+        edition edited by John Haig.
+
+        Snn  -  the stroke count.  A display of all the characters with that 
+        stroke count is produced.  As above,  the desired character  can  be 
+        selected for the display of its compounds. 
+
+        Bnn  - the primary radical (Bushu).  The Bushu numbers used by XJDIC 
+        are those from  Nelson  (as  depicted  inside  the  front  cover  of 
+        Nelson's  "Japanese  English  Character  Dictionary").  To  use this 
+        method,  you will either need to have a copy of the  Nelson  radical 
+        table with you, or be prepared to use the "R" command to display the 
+        radical numbers.  As an alternative to keying the Bushu number,  you 
+        can cut the kanji from the radical display into the  response,  i.e. 
+        respond with "B" followed by the kanji.  The kanji will be detected, 
+        and provided it is one of the kanji identifying the Bushu in the "R" 
+        display, the appropriate Bushu number will be derived. 
+
+        (For  the  Bushu search,  you will also be asked for a stroke count, 
+        and only the  kanji  with  that  bushu/stroke  combination  will  be 
+        displayed.  If  you  want  a display of all the kanji for that bushu 
+        number, enter a stroke count of 0, or just press "Enter".) 
+        
+        Cnn - the "classical" radical,  where this is listed.  As  with  the 
+        Bnn search, you be asked for a stroke count. 
+        
+        Hnnnn  -  the  Halpern number,  which is the index in Jack Halpern's 
+        Character  Dictionary.   About  3000  characters  in  KANJIDIC  have 
+        Halpern numbers assigned. 
+        
+        Pn-n-n - the SKIP code used by Halpern to find kanji. 
+        
+        Unnnn - the Unicode code for the kanji. 
+        
+(Other codes may be added, so check the kanjidic.doc file.) 
+
+K  -  by the reading (or yomikata) of a character.  Both on and kun readings 
+are used for this search.  A display  of  all  kanji  with  that  particular 
+yomikata  is  produced,  and the desired character can be selected using the 
+mouse.  A kanji can also  be  entered  if  its  characteristics  are  to  be 
+examined.  As  with  the  other  mode  of  usage,  an  automatic romaji/kana 
+conversion can be invoked by beginning the key with either "@" or "#". 
+
+M - by its English "meaning". 
+
+L - initiates the multi-radical kanji search technique,  in which  the  user 
+specifies up to 10 radical components of the kanji. See (d) below. 
+
+R - initiates a display of all the Bushu along with their numbers. 
+
+If no identifying code is entered, XJDIC assumes it is searching for a kanji 
+or yomikata. 
+
+Once  the  search  criteria  for  a  kanji  has  been provided by any of the 
+techniques described above,  XJDIC  displays  the  kanji  which  meet  those 
+criteria. The display can be in one of two forms: 
+
+(i)  a  short-form,  in  which  all  the  kanji  which meet the criteria are 
+displayed in a block, sorted by stroke count and bushu; 
+
+(ii) a long-form,  in which a complete line of information is displayed  for 
+each  kanji  (as  described  below.)  (The short-form/long-form modes can be 
+toggled using the "-" command.) 
+
+If only one kanji meets the criteria,  e.g.  if the search is for the  kanji 
+itself, then the long-form display is invoked. 
+
+In  the  long-form  display,  the  following  information about the kanji is 
+displayed: 
+
+        KANJI character 
+
+        KUTEN code in decimal ([nnnn]) 
+
+        JIS code in hexadecimal 
+
+        [Kuten-code:Shift-JIS-code] 
+        
+        Unicode code in hexadecimal (Uxxxx) 
+        
+        (classic) Nelson No (Nnnnn) 
+
+        (new) Nelson No (Vnnnn)
+        
+        Bushu No (Bnn, and Cnn if the "classical radical differs) 
+        
+        Stroke Count (Snn) 
+        
+        Halpern No (Hnnnn) 
+
+        SKIP code (Pn-n-n) 
+        
+        Grade (G1 to G6 if taught in those grades, G8 for Joyo kanji, and G9 
+        for the supplementary Jinmeiyou kanji.) 
+       
+        Other  codes  available  in  the  KANJIDIC  file,  each  with  their 
+        distinguishing first letter. 
+        
+        "on" readings of the character in katakana 
+        
+        "kun" readings in hiragana 
+        
+        meanings  ascribed  to  the  kanji (such as are found in the popular 
+        kanji dictionaries,  such as Nelson,  Heisig,  Halpern and  Spahn  & 
+        Hadamitzky.) 
+
+NB:  The  KANJIDIC file is under continuous revision.  The above information 
+is certain to be incomplete.  Please consult the "kanjidic.doc" file for the 
+current format and fields. 
+
+Note that it is possible to suppress the display of certain  fields  through 
+use of the "kdnoshow" directive in the .xjdicrc file.  (This feature was
+accidently dropped from V2.3, but re-instated in V2.4.)
+
+At  this  stage,  the  user  can  request  a  display  of  all the compounds 
+containing that character by  using  the  mouse  to  select  the  kanji  and 
+entering it as the search key for a main dictionary search. 
+
+XJDIC  has  two  modes  for  displaying  compounds  containing  a particular 
+sequence of one or more kanji.  Either the display  is  restricted  to  only 
+those  compounds which begin with the sequence,  or all compounds containing 
+the sequence can be displayed.  When XJDIC loads it is in the  more  limited 
+mode, however the mode can be toggled using the "/" key. 
+
+(c) Dictionary Extension File  [Note: this may not yet be available.]
+
+Associated  with  the  main  EDICT dictionary file is the EDICTEXT extension 
+file, which contains further information about a selection of EDICT entries. 
+Typically  the  EDICTEXT  file  contains  a  paragraph  or  two  of  further 
+information, including examples of the use of the Japanese words or phrases. 
+The  EDICT file has the tag:  "[qv]" appearing in the entry to indicate that 
+there is further information available. 
+
+It is possible to select and display information from the EDICTEXT file from 
+within  XJDIC,   provided  the  appropriate  EDICTEXT.XJDX  index  file   is 
+available. 
+
+To  display  information  from  the  EDICTEXT  file,  you need to invoke the 
+appropriate mode by pressing "]",  and cutting the kanji  or  kana  head-word 
+into the prompt.  If there is an entry in the EDICTEXT file that matches the 
+EDICT head-word, it will be displayed. 
+
+(d) Multi-Radical Kanji Selection 
+
+The  multi-radical  kanji  selection  system  uses  a  massive file of kanji 
+identified by all their radical  components.  This  file  was  painstakingly 
+prepared  by  Michael  Raine in 1994/1995 with the intention of facilitating 
+the selection of kanji by this technique.  Michael's  file,  and  the  basic 
+technique  of  identifying  more than one radical per kanji has been used by 
+Derc Yamasaki to add this function to JWP (from Version 1.2),  and has  been 
+used  also by Dan Crevier for his Unidict program (unreleased at the time of 
+writing.)  This technique is only available for the 6,355 JIS X 0208 kanji.
+
+Note that the "radicals" used in this classification of the kanji consist of 
+most of the "classical" radicals,  plus a number of other commonly-occurring 
+elements.  To use this technique effectively,  familiarity with the radicals 
+and elements is necessary.  One method of operation is to run  the  "xjdrad" 
+program,  which  is  included in the XJDIC distribution,  in another window. 
+This program displays all the radicals and elements,  and may be  use  as  a 
+source of the elements to click on and drop into the XJDIC prompt. 
+
+Pressing  "L"  at  the  "KANJI  LOOKUP TYPE:" prompt puts XJDIC into Radical 
+Lookup Mode,  and initiates the "Lookup Code:" prompt.  The program stays in 
+this mode until the user requests return to the normal mode by pressing "X". 
+
+The items that can be entered at the "Lookup Code:" prompt are: 
+
+(i)  the  "R" command,  which triggers the display of the table of radicals. 
+This table differs from the "classical" bushu table resulting from the  "\r" 
+command,  in  that  it  does not include all the classical radicals (some of 
+which only occur rarely),  and it includes some other common elements  which 
+are not classical radicals.  As this table is rather large, users may prefer 
+to have it permanently displayed  in  another  window,  and  the  "xjdrad.c" 
+program will simply display the radicals for this purpose. 
+
+(ii)  a  radical element.  These may be selected from the table mentioned in 
+(i) above.  Each time a radical is entered, the program displays the current 
+radicals  in  its  search  set,  and  the  number  of  kanji  which meet the 
+progressive selection criteria.  If the number of matching  kanji  does  not 
+exceed 20, those kanji are displayed. 
+
+(iii)  the  "Dn" command,  which tells the program to remove the nth radical 
+from the search set. Each radical is preceded in the display by its number. 
+
+(iv) the "Sn" command,  which tells the program to restrict  the  search  to 
+kanji  consisting  of  a  certain number of strokes.  "Sn" will restrict the 
+search to kanji of exactly "n" strokes;  "S+n" will restrict the  search  to 
+kanji  with  a  stroke-count  greater  than or equal to "n";  and "S-n" will 
+restrict the search to kanji with a stroke-count less than or equal to  "n". 
+"S0"  will  restore  the default condition,  which is that stroke counts are 
+ignored. 
+
+(v) the "L" command,  which tells the program to display all the kanji which 
+currently match the search criteria, even if there are more than 20. 
+
+(vi) the "C" command, which clears the set of search radicals. 
+
+(vii)  the  "V"  command,  which  enables  the user to examine which radical 
+elements are identified for a kanji.  This command triggers a further prompt 
+for the kanji to be examined. 
+
+(viii) the "X" command, to request return to normal mode. 
+
+Once the desired kanji is identified, the user will usually return to normal 
+mode to examine that kanji, or to search for its compounds. 
+
+
+E. EXITING 
+
+To  exit  XJDIC,  type Ctrl-D.  Ctrl-C will work,  but may leave echo turned 
+off.  Entering Ctrl-Z at the "SEARCH KEY:" prompt will cause the program  to 
+suspend.  It  may be resumed by typing "fg" at the Unix command-line prompt. 
+(The program will also exit on the command  "bye"  to  retain  compatibility 
+with earlier versions.) 
+
+
+F. ON-LINE HELP 
+
+Basic operating information can be obtained by typing "?".  A summary of the 
+command-line options can be obtained by invoking XJDIC with the "-h" option. 
+The GNU Public Licence can be displayed by typing "!".
+
+G. ROMAJI-TO-KANA CONVERSION 
+
+To enter a search key in kana, initiate it with either "@" (hiragana) or "#" 
+(katakana),  then  type it in romaji and it will be converted to kana as you 
+type.  The romaji->kana translation is almost  identical  to  that  used  in 
+"front-end-processors"  such  as  kinput,  and  MOKE and other Japanese word 
+processors,  i.e.  for a small "tsu" you can type either a double consonant, 
+e.g.  "shippai",  or  "t-",  e.g.  shit-pai,  and for "n" you can type n' if 
+necessary (e.g.  as in "hon'ya").  Most of the  time  just  typing  ordinary 
+Hepburn  or  kunrei romaji works.  Note that the romaji must follow the kana 
+style for long vowels.  Tokyo must be toukyou, NOT tookyoo. 
+
+The  actual  romaji  to  kana  conversions  are  specified   in   the   file 
+"romkana.cnv".  This  file provides the capability for inputting all the kana 
+characters.  It may,  however,  be edited if you want to add extra mappings, 
+e.g. some of the modern katakana mora constructions. 
+
+H. JAPANESE CODES 
+
+Kterm can operate with the JIS,  EUC or Shift-JIS code sets (as specified by 
+the  command-line,   or  by  Ctrl-middle_mouse_button).   XJDIC   uses   EUC 
+internally  and  displays  in  (new) JIS,  EUC or Shift-JIS.  New-JIS is the 
+default,  and the others can be specified by command-line option or  in  the 
+.xjdicrc file.  It will accept input in any code type. 
+
+In  fact,  XJDIC's  operation  is smoothest in JIS mode.  This is because it 
+detects the closing "shift-out" sequence which is present in this code,  and 
+immediately  invokes  the  dictionary  search.  Thus it is possible to cut a 
+string from a document being read, and initiate a dictionary scan, solely by 
+using the mouse.  (Entering a kana/kanji string in response to almost all of 
+XJDIC's prompts will result in a dictionary search on that string.) 
+
+Note that if you are using kanji from the JIS X 0212-1990 supplementary set,
+you must use an appropriate environment, such as the patched X11R6 kterm. In
+such an environment, only JIS and EUC coding is available, as Shift-JIS cannot
+represent the JIS X 0212 kanji.
+
+I. DICTIONARIES 
+
+XJDIC depends for its performance on a number of dictionary files, typically 
+one  or  more  Japanese <-> English dictionaries and a Kanji dictionary.  It 
+has been designed to work with the EDICT dictionary,  which is the  author's 
+extension  of  MOKE's  EDICT,  and  the  KANJIDIC character dictionary file, 
+compiled by the author from various sources.  EDICT  has  now  over  100,000 
+entries,  while  KANJIDIC  has  an  entry for each of the kanji in the JIS X 
+0208-1990 standard. 
+
+(In addition there are a number of data files, including a file of radicals: 
+RADICALS.TM,  compiled by Theresa Martin for the earlier JDIC  program;  the 
+ROMKANA.CNV  file  of  romaji-kana  mappings  and  the  VCONJ  file  of verb 
+inflections which were compiled by the author, the former partly from one of 
+the .hlp files in MOKE.) 
+                                                                          
+The format each entry of EDICT is: 
+
+Kanji [kana] /English_1/English_2/..../ 
+
+or 
+
+kana /English_1/English_2/..../ 
+
+For full information about EDICT, see the edict.doc file. 
+
+KANJIDIC is a compilation of information about each of the kanji in the  JIS 
+X 0208 standard. It has the format: 
+
+Kanji  hex_JIS_code  Unnnn  <Nnnnn>  Bnnn <Cnn> <Hnnnn> <Fnnnn> <Pn-n-n> Snn 
+<Gn> on_reading(s) kun_reading(s) {meaning(s)} 
+
+where N, H, B, S and G flag the Nelson number, Halpern number, Bushu number, 
+stroke  count  and  (school)  grade  respectively.   The  Pn-n-n  codes  are 
+Halpern's SKIP codes for finding kanji.  On readings are in katakana and kun 
+readings  in  hiragana.  For  full  information  about  this  file,  see the 
+kanjidic.doc file. 
+                                                         
+J. MULTIPLE DICTIONARIES 
+
+XJDIC has the option of handling multiple  dictionary files. To use this 
+option,  the alternative dictionary files  must  be  available  with  
+appropriate  .xjdx  files,  and identified to XJDIC via the "-d" command-
+line option, or the "dicfile" lines in   the  .xjdicrc  file.   Note  that  
+if  you  are  specifying  additional dictionaries, you must tell XJDIC about 
+*all* the dictionary files you  are using,  including EDICT, and you must 
+provide the fully qualified path-names with the files. 
+
+The multiple  dictionary files can be accessed in the following manner:
+
+(a) by selecting one of the files by  pressing  the  "="  key  (which  
+cycles  front-wards through  the available dictionaries), the  "^"  key  
+which cycles backwards through the list, or the "_" key (which lists the  
+dictionary  files  available, and  asks  the  user  to  select one).  The  
+alternative  dictionary files are searched and displayed in exactly the same 
+way as the default EDICT dictionary. 
+
+(b) by using the "global search" option. In this option, several dictionary
+files are examined during a search, and the longest match is reported,
+preceded by the dictionary number. The "$" command invokes a request for
+the dictionary file numbers to include in the global search, and the "%"
+command toggles the global search mode on and off. (The dictionary
+numbers are entered in a line with either spaces or commas between
+them.) When in global-search mode, there is another option invoked by
+the "`" command (single left quotation mark). This replaces the display
+of the longest match of all files, with the longest match from *each* file.
+
+The alternative dictionaries suitable for use with XJDIC include  JDDICT  (a 
+Japanese-German  file),  EDICLSD3  (Life Sciences Dictionary), WSKTOK.DAT 
+(reverse-henkan file of compounds and readings,  but  no  English 
+translations), LAWGLEDT (the University of Washington Law Glossary),
+COMPDIC (file of computing & telecommunications terms) and ENAMDICT
+(file of place and person names.)
+
+K. FILTERS 
+
+Up to 10 sets of filters can be specified using "filt"  lines  in  .xjdicrc. 
+These  allow the option of only displaying dictionary entries which contain, 
+or do not contain certain text strings. 
+
+There are three types of filters: 
+
+(a) inclusion filters (Type 0).  If one  of  these  is  active,  only  those 
+entries which contain one of the specified text strings will be displayed. 
+
+(b)  exclusion  filters  (Type  1  & 2).  If one or more of these is active, 
+lines which contain the specified text strings will  not  be  displayed.  In 
+the  case of Type 2 filters,  they only function if the dictionary entry has 
+just ONE English entry. 
+
+The format of the filter lines in xjdicrc is; 
+
+filt f t on|off "filter name" string_1 string_2 .... 
+
+where: 
+
+        f - the filter number (0 to 9) 
+
+        t - the filter type (0, 1 or 2) 
+        
+        on|off - sets the initial state of the filter 
+
+        "filter name" - the " " delimited name  of  the  filter,  up  to  50 
+        characters long 
+
+        string_n  -  the  space-separated strings which are to be matched as 
+        part of the filter operation.  Up to 10 strings per filter,  each up 
+        to 10 characters. 
+
+Here are some sample filter entries: 
+
+        filt 0 2 "Suppress proper name entries" (pl, (pn pn) pl) 
+
+        [This  filter,  if  activated,  would prevent the display of entries 
+        which only relate to proper names.] 
+        
+        filt 1 0 "Show only place names" (pl, pl) 
+        
+        [This  filter  would  enable  XJDIC  to  be  used  as  a  place-name 
+        dictionary.] 
+
+        filt 2 1 "Suppress colloquialisms" (col) (col.) 
+                                              
+The  ";"  command  initiates  a  dialogue  in which individual filters to be 
+activated or deactivated. 
+
+Use caution when setting up filters,  as  their  operation  may  make  XJDIC 
+examine many dictionary entries, resulting in a slow display of information. 
+Note  that  once a filter condition has been met for a dictionary entry,  no 
+further testing is carried out for that entry. 
+      
+As mentioned above, it is possible to set or clear a "one-off" filter string 
+which must be present for a line to be displayed.  This is done with the "'" 
+(single right quote) command.  This string can be English,  kana  or  kanji. 
+Thus,  for example,  it is possible to search for compounds of two kanji, by 
+setting one as the filter and  searching  for  the  other.  This  filter  is 
+effectively a Type 0 filter. 
+
+L. LOGGING 
+
+Users  of the author's JREADER program will notice that XJDIC has no logging 
+facilities.  This is because the X11 environment makes logging possible  via 
+another  window  running  an  editor  such  as  jstevie  or nemacs against a 
+log-file. 
+
+JREADER also has a facility to look up kanji  compounds  which  are  not  in 
+EDICT  in  MOKE's  Kanji->Kana  file (WSKTOK.DAT).  If you wish to have this 
+capability in XJDIC, obtain the file WSKTOK.DAT and use it as an alternative 
+dictionary. 
+
+M. CONTROL FILE 
+
+XJDIC uses a control file called ".xjdicrc".  XJDIC will look for this  file 
+in  the directory identified by the XJDIC environment variable,  in the HOME 
+directory, and finally in the current directory. Alternatively, a
+file-name can be specified in the "-c" command-line option.
+
+XJDIC will function quite well without a .xjdicrc file,  but it is a  useful 
+way  of  setting  various  options,  and it is the only way to set up search 
+filters and to suppress the display of KANJIDIC fields. 
+
+.xjdicrc contains lines of text which consist of: 
+
+line_type <parameters> 
+
+The line_types are: 
+
+[SA: Stand-alone, CL: Client, SV: Server] 
+
+        filt [SA,CL] 
+
+                set up filter details (see the FILTERS section) 
+
+        omode e|j|s       [SA,CL]
+        
+                set the screen output codes to EUC, JIS or Shift-JIS 
+
+        kanamode	[SA,CL]
+
+                set the initial default input mode to hiragana
+
+	exactmatch	[SA,CL]
+
+		turns the exact match option on at startup
+
+        dicdir	path_name	[SA,SV,CL]
+
+		set the location of the dictionary and data files. The
+		program will try this directory first, followed by the
+		local operating directory. Affects all files except the
+		clipboard and the control file itself. Note that this
+		line should occur *before* any dicfile, etc. lines.
+
+        dicfile path_name      [SA,SV]
+        
+                dictionary name (default: edict) 
+
+        kdicfile path_name [SA,SV] 
+        
+                kanji dictionary name (default: kanjidic) 
+
+        romfile path_name [SA,CL] 
+        
+                romaji conversion file (default: romkana.cnv) 
+
+        verbfile path_name [SA,CL] 
+        
+                conjugation file (default: vconj) 
+
+        radfile path_name [SA,CL] 
+        
+                radical/bushu no. file (default: radicals.tm) 
+
+        radkfile path_name [SA,CL] 
+        
+                radical/kanji file for the multi-radical search
+                (default: radkfile) 
+
+        jverb on|off [SA,CL] 
+        
+                enable or disable the verb de-inflection function 
+
+        kdnoshow ABCDE... [SA,CL] 
+
+                declaration of the KANJIDIC fields to be suppressed from the 
+                display.  For  example,  "kdnoshow  YMQ"  will  prevent  the 
+                display  of  the  Pin-Yin information and the Four-Corner and 
+                Morohashi indices. 
+
+        exlist and from but .... .... 
+
+                declaration of common words of  3  or  more  letters  to  be 
+                excluded  from  the  XJDXGEN  generation  of  an .xjdx file.  
+                There can be more than one "exlist" line in the file. 
+
+	clipfile	[SA,CL]
+
+		specify the name of a clipboard file to use.
+
+	gnufile	[SA,CL]
+
+		specify the name of GNU Public Licence file (default is
+		"gnu_licence".)
+
+	rvdisplay	on | off	[SA,CL]
+
+		specify the initial setting of the reverse video
+		display of matches. (Default is ON)
+
+Note that some of these are also command-line options.  If  both  are  used, 
+the control-file request takes precedence. 
+
+N. OTHER FILES 
+
+Apart from the .xjdicrc control file, XJDIC requires five other files: 
+
+radicals.tm  -  the list of bushu numbers and descriptive kanji,  originally 
+              prepared by Theresa Martin for JDIC. 
+              
+romkana.cnv - the list  of  romaji  to  kana  mappings  used  in  the  input 
+              conversion routines. 
+
+vconj - the verb/adjective inflections used to identify the dictionary forms 
+              of words prior to lookup. 
+
+radkfile  -  the  file  of  radicals  used in the multi-radical kanji search 
+              function, and the kanji matching each radical. 
+
+kanjstroke - file of kanji  and  their  stroke-counts,  extracted  from  the 
+              kanjidic file. 
+
+These  five  files are available free of charge,  and can be modified by the 
+user. Exercise extreme caution if you do change these files, particularly if 
+you change the order of entries. 
+
+O. INSTALLATION 
+            
+See the document  XJDIC24.INSTALL  for  information  on  compiling  the  XJDIC 
+program and setting up the dictionary files and index files. 
+
+Note  that there are two compilation options with XJDIC.  You can operate it 
+as a single stand-alone program,  or as a client server pair.  You can  also 
+specify  whether  the  module that searches the dictionary files,  i.e.  the 
+stand-alone program or the server,  holds all the dictionary files and index 
+files  in  RAM, uses memory-mapped I/O (default) or operates a demand-paging 
+mechanism on these files. The former obviously takes more RAM and swap space,  
+but  will  usually  execute more quickly,  whereas the latter will run more 
+slowly but will coexist more easily with other programs and  will  run  on  
+smaller  configurations.  See XJDIC24.INSTALL for details of these options. 
+
+Make  sure  you  have  the  XJDIC  executable  in  your  path,  and that the 
+dictionary,  index and radical files are in your current directory or in the 
+places specified by the .xjdicrc file. 
+
+P. AUTHOR'S COMMENT 
+
+XJDIC began as a rework of  my  earlier  JDIC/JREADER  programs  which  were 
+written for PCs or clones.  Most of the code came from JREADER. It has since 
+been extended,  but generally XJDIC has been kept in  step  with  equivalent 
+releases of JDIC/JREADER. 
+
+In producing XJDIC I have relied heavily on the Japanese environment such as 
+is provided by kterm, with the result that XJDIC is smaller than either JDIC 
+or  JREADER.  Also  I  took  a different approach with the kanji dictionary. 
+Whereas in JDIC/JREADER I  use  a  compressed  kanji  dictionary  file  with 
+separate  index  files  for  Nelson  number,  stroke count,  yomikata,  etc. 
+(originally devised by Stephen Chung for his JWP Word Processor package), in 
+XJDIC I have used the same indexing and lookup approach  as  with  the  main 
+dictionary. 
+
+XJDIC's  output  format  is perhaps not quite as elegant as that in JDIC and 
+JREADER,  largely because it does not have as much  control  over  essential 
+aspects  such as window and font size.  This is more than compensated for by 
+the inherent advantages of the windowing environment. 
+  
+XJDIC will not win any prizes for user-friendliness, as it is totally devoid 
+of pop-up/pull-down/click-on-this-and-that features,  and relies on the user 
+using  a  slew  of  single-character  commands  which  are  mostly devoid of 
+mnemonic attributes. There are a couple of reasons for this: 
+
+(a) to implement a friendlier environment I would have had to program it  in 
+a  GUI  environment,  which would have taken much more time and effort,  and 
+thus it probably never would have been finished. 
+
+(b) I wanted to have a program that could be operated as simply as possible, 
+with  an  absolute  minimum  of  user  interaction.  I  think  it  is  quite 
+successful  in  this respect,  as I find one of my most common uses of it is 
+the gloss Japanese text I am reading,  which I can achieve without  touching 
+the  keyboard  at  all.  Even  when  I  am  carrying out other tasks such as 
+searching for a kanji,  I find the repertoire of  single-character  commands 
+simple to use, and certainly economical of effort. 
+
+My  thanks  to  the  many  people  who  helped  and  gave advice to me,  and 
+particularly to Lars Huttar,  Scott Trent,  Philip Moore,  Ken Lunde and the 
+other  XJDIC  beta-testers for V1.0 and 1.1,  and more recently Nate Bailey, 
+Ben Bullock and Hank Cohen who tested V2.0,  Michael Raine for the data that 
+went  in  the  "radkfile",  plus  those  many  people  whose suggestions and 
+critical  comments have  played  a  considerable  part  in   the   package's 
+development. 
+                     
+Cameron Blackwood helped me with the cbreak code, Paul Burchard provided the 
+pure BSD versions of this,  Hitoshi Doi (who ran it on the 64-bit DEC Alpha) 
+pointed out my invalid assumption that long integers were invariably 4 bytes 
+long, Hank Cohen showed me how to detect the window size. Much valuable
+help in later versions came from William Maton, who carried out very
+extensive testing, and suggested many performance improvements.
+
+I was greatly assisted in converting the code to  operate  in  client/server 
+mode by Comer & Steven's excellent "Internetworking with TCP/IP Vol III (BSD 
+Sockets)" book. 
+
+A  special mention to Andrew Moore,  my former Department's sysadmin,  who 
+laboured long  and  hard  way  back  in  1992  to  install  wnn/kterm/kinput  
+on  our DEC5000/3000/2000  (Ultrix)  network without knowing a word of 
+Japanese.  As this was possibly the first Ultrix installation of kterm/wnn 
+outside  Japan, it  was quite an achievement.  Times changed,  and much of 
+the V2.0 and later work was done on "marvin",  my 486 at home running Linux.
+Linux's JE (Japanese Environment) runs out-of-the-box, and is a joy to use. 
+V2.3 was finished off using Redhat Linux 5.0, which forced me to come to
+grips with a more POSIX environment. V2.4 was polished of on "hanako",
+an IBM Thinkpad T23 running RedHat 7.3.
+
+The  source is now available to the world,  subject to the GPL restrictions.  
+It has  successfully  been  installed  on  many  Unix  platforms.  A  highly 
+successful  Macintosh  KanjiTalk  port/rework  has  been  undertaken  by Dan 
+Crevier to produce the popular MacJdic program which was recently placed  in 
+the top 100 Mac programs in Japan. 
+
+As ever comments and constructive criticism are welcome. 
+
+Q. REVISIONS
+
+(a) VERSION 1.1 
+
+The additions in Version 1.1 include: 
+
+o the built-in romaji to kana code,  which was in JDIC,  but not included in 
+the original XJDIC. 
+
+o backspacing on the English, kana and kanji input lines. 
+
+o the filter system* 
+
+o the verb de-inflection function* 
+
+o a more flexible kanji index selection 
+
+o the ability to specify a stroke count/bushu combination 
+
+o the .xjdicrc control file 
+
+o the alternative dictionary option 
+
+* these features also became available in V2.3 of JDIC & JREADER 
+
+(b) VERSION 2.0 
+
+o the split between stand-alone & client/server operation 
+
+o the Priority English keyword feature+ 
+
+o the EDICT extension file support+ 
+
+o the automatic detection of the screen size,  and the  folding  of  display 
+lines 
+
+o the one-shot filter facility 
+
+o the short-form kanji display option 
+
+o the "kdnoshow" feature to suppress unwanted KANJIDIC fields 
+
+o recognizing Ctrl-Z and suspending, and Ctrl-D to exit 
+
+o exact-match display mode 
+                            
+o raw EDICT display mode. 
+
+o the optional setting of kana input mode, and the "kanamode" directive. 
+
+o  extension  of  the  "alternative  dictionary" function to include up to 9 
+files. 
+
+o words excluded from the index are now in the .xjdicrc file. 
+
++ these features are also included in V2.5 of JDIC/JREADER 
+
+(c) Version 2.1 
+
+o the compile-time option to use demand-paging of the dictionary  and  index 
+  files,  instead  of  holding them all in RAM.  This effectively introduced 
+  into xjdic the memory management used in JDIC/JREADER. 
+
+o the multi-radical lookup technique for kanji, using Michael Raine's files. 
+
+(d) Version 2.2
+
+o the handling of kanji in the JIS X 0212-1990 set. These 5,801 kanji are
+  coded in 3-byte EUC, so a few fiddles were needed to xjdic and xjdxgen.
+
+o the global search option.
+
+(e) Version 2.3
+
+o integration of KANJD212 into the formal kanji dictionary
+
+o the "clipboard" option. (If you are curious, I added this option
+because for some unexplained reason Japanese text strings cut from
+Netscape [running on a Sun] cannot be pasted into a kterm window [under
+Ultrix]. To get around this, I run a simple program in an xterm window
+which copies any keystrokes into a "clipboard" file.)
+
+o reformatted display (this was done partly because I liked what I saw
+in Dan Crevier's Unidict, and partly because the existing code was a
+mess and needed reworking.)
+
+o scrolling *upwards* through the list of dictionaries.
+
+o better handling of the .xjdicrc file, and a "dicdir" directive to
+allow central location of the key files.
+
+o memory-mapped I/O as a compile option for the dictionary and index
+files.
+
+o inclusion of the dictionary file name in the prompt, and the numbers
+in the global search notification.
+
+o display of the GPL document.
+
+o the "man" page.
+
+(f) Version 2.4
+
+o a few bugs fixed
+
+o expansion of the global search option to allow the report of the 
+search for all files.
+
+o addition of the "exactmatch" startup option to the .xjdicrc file
+
+o re-instatement of the accidently dropped "kdnoshow" option.
+
+Jim Breen 
+School of Computer Science & Software Engineering
+Monash  University 
+Melbourne, Australia 
+(jwb@csse.monash.edu.au) 
+May 2003
+                                
+
+APPENDIX A - COMMAND SUMMARY
+
+(This  Appendix  contains  a copy of the information displayed by xjdic as a 
+result of the _?_ command.) 
+
+                  XJDIC USAGE SUMMARY 
+At the XJDIC SEARCH KEY: respond with a string of ASCII, kana and/or 
+kanji to look up in the current dictionary (prefix with @ or # to invoke
+conversion of romaji to hiragana or katakana) 
+                  SINGLE CHARACTER COMMANDS 
+  \ enter Kanji Dictionary mode   ?   get this Help display 
+  _ select dictionary files       =/^ cycle up/down dictionary files 
+  ' set/clear one-off filter      ; activate/deactivate general filters 
+  / toggle kanji_within_compound  - toggle long kanji display on/off 
+  $ set global dictionaries       % toggle global search mode on/off 
+  ] display Dictionary Extension  : toggle verb deinflection on/off 
+  + toggle priority English keys  | toggle unedited display mode on/off 
+  [ toggle exact_match on/off     & toggle kana input mode on/off 
+  { switch to clipboard input     } toggle reverse video of matches 
+  ` toggle multiple global disp.  Ctrl-D to exit 
+  ! display gnu licence           Ctrl-Z to suspend 
+      Kanji Dictionary mode - prompt is KANJI LOOKUP TYPE:. Responses: 
+  a single kanji or a kana reading (default) 
+  j followed by the 4-digit hexadecimal JIS code for a kanji 
+  j followed by k and the 4-digit KUTEN code for a kanji 
+       (precede code with `h' for JIS X 0212 kanji.) 
+  j followed by s and the 4-digit hexadecimal Shift-JIS code for a kanji
+  m followed by an (English) kanji meaning 
+  c followed by an index code such as Nnnn (Nelson), Bnn (Bushu), etc 
+  r initiates a display of all radicals and their numbers 
+  l switches the program into the Radical Lookup mode 
+
+APPENDIX B - XJDSERVER PROTOCOL 
+
+INTRODUCTION 
+
+This appendix explains  the  message  protocol  used  by  the  client/server 
+version  of  xjdic  V2.0 and later.  It is documented here in case any other 
+software developer wants to develop client  programs  which  call  upon  the 
+dictionary file search facility provided by the server program (xjdserver). 
+
+This  narrative  only describes the protocol.  For a complete understanding, 
+the reader must examine the code in the xjdserver.c and xjdclient.c modules. 
+
+SERVER PROTOCOL OVERVIEW 
+
+The xjdserver program is a stateless dictionary search  engine.  It  retains 
+no information whatsoever about previous requests or searches,  and it is up 
+to the client software to keep track of what it is about, and to provide all 
+the  details  for each request.  Each transaction by the server is triggered 
+by a request message sent by a client.  The server  processes  the  request, 
+and returns a response message. 
+
+The messages in the xjdserver protocol are carried between  the  client  and 
+server  via  the UDP (User Datagram Protocol),  which is one of the Internet 
+protocols.  The server uses the BSD Socket library, via which it maintains a 
+passive UDP socket listening for requests on its port  number.  The  default 
+port number is 47512, but the installer can modify this, and both the client 
+and server can select a port number by command-line parameter. 
+
+The format of the REQUEST and RESPONSE messages is shown below. 
+
+        typedef struct {
+                long           xjdreq_checksum;
+                short          xjdreq_type;
+                short          xjdreq_seq;
+                short          xjdreq_dicno;
+                long           xjdreq_indexpos;
+                short          xjdreq_schlen;
+                unsigned char  xjdreq_schstr[21]; } REQ_PDU;
+
+        typedef struct {
+                long           xjdrsp_checksum;
+                short          xjdrsp_type;
+                short          xjdrsp_seq;
+                long           xjdrsp_resindex;
+                short          xjdrsp_hitposn;
+                short          xjdrsp_reslen;
+		long           xjdrsp_dicloc;
+                unsigned char  xjdrsp_resstr[512]; } RSP_PDU; 
+         
+(All the short and long integer fields have their bytes in "network order.") 
+
+The  check-sum  field consists simply of the arithmetic summation of all the 
+fields in the message,  except the check-sum itself.  If the server receives 
+a  message with an incorrect check-sum,  it is ignored.  The sequence number 
+field is returned to the client,  thus uniquely identifying request/response 
+message pairs. 
+
+The Message Types, as defined in xjdic.h, are: 
+
+    #define XJ_FIND      1   /* find entry    */
+    #define XJ_ENTRY     2   /* get this entry according to index   */
+    #define XJ_OK        3   /* find/entry_get succeeded    */
+    #define XJ_NBG       4   /* find/entry_get failed       */
+    #define XJ_PROTE     5   /* protocol error - server only        */
+    #define XJ_HULLO     6   /* just send back an XJ_OK     */
+    #define XJ_GET       7   /* get this entry, wo checking any match*/
+
+The  XJD_HULLO  message  is  typically used by a client at initialization to 
+check if the server is available.  On receipt of this  message,  the  server 
+will  return  an XJD_OK response.  In this message it will return the number 
+of dictionary files it has available in its xjdrsp_hitposn field, and in the 
+xjdrsp_resstr string it will return the names of the dictionary files in the 
+following format: 
+
+        #0file_name0#1file_name1#2........ 
+
+The  XJD_FIND  instructs  the  server  to  find  the  entry  in   dictionary 
+xjdreq_dicno  which  contains the *first* occurrence (in the ordered list of 
+tokens) of the key identified by the initial xjdreq_schlen characters of the 
+xjdreq_schstr string.  If no match against the key can be found, the XJD_NBG 
+message is returned.  If a match is found,  an XJD_OK  message  is  returned 
+with the first 511 characters of the entry in xjdrsp_resstr, the position of 
+the  key  within  the  entry in xjdrsp_hitposn,  and the index number of the 
+entry in the .xjdx index file in xjdrsp_resindex. 
+
+The XJD_ENTRY request is similar to the XJD_FIND  request,  except  that  it 
+specifies  in  xjdreq_indexpos  the  index  number  of  the  entry it wants; 
+typically 1 greater than the last entry returned.  If the  token  associated 
+with  this entry matches the key,  an XJD_OK message containing the entry is 
+returned, and if not an XJD_NBG message is returned. Also, this call returns 
+the character position of the entry in the dictionary in the xjdrsp_resindex 
+field,  to allow the client to suppress the display of entries with multiple 
+matches. 
+                            
+
+CLIENT PROTOCOL OVERVIEW 
+
+As  described  above,  the  client sends requests to the server and receives 
+responses.  As the UDP protocol has no error handling, the client and server 
+software must carry out this task.  In the xjdserver protocol,  as is almost 
+invariably  the  case  with  stateless  servers,  most  of the detection and 
+recovery from communication errors is carried out by the client. 
+
+In particular,  the client must deal with the problems associated  with  the 
+length  of  time it takes messages to traverse the network.  In a local area 
+network  this  will  typically  be  a  very  short  time,   but  may  extend 
+considerably  if  the  client  is  using  a  congested  wide-area network to 
+communicate with the server.  In the protocol described  below,  the  client 
+uses  time-outs  to detect if request or response messages have been lost or 
+corrupted in the network.  As the setting of too high a time-out value  will 
+result  in a slow recovery from errors,  and too short a time-out value will 
+result in unnecessary  retransmissions,  the  client  protocol  detects  the 
+round-trip  delay  of  the  request/response message pairs,  and adjusts the 
+time-out values accordingly. 
+
+The basic error handling is performed as follows: 
+
+(a) each message has a checksum, and each request/response pair has a unique 
+sequence number. 
+
+(b) if either the client or  server  receives  a  message  with  an  invalid 
+checksum, it ignores it.  The server continues to wait for the next message, 
+and  the  client  reactivates  its "select" socket call.  Similarly,  if the 
+client receives a message with an incorrect sequence number, it is ignored. 
+
+(c) when the client sends a request message,  it waits for the return of the 
+matching response message,  or the expiry of a time-out.  The time-out value 
+is set initially to the time it took for  the  original  socket-bind  to  be 
+completed, or to one second, whichever is greater. 
+         
+(d) if the client times out while waiting for a response, it retransmits the 
+request. After 10 consecutive timeouts, it asks the user if he/she
+wishes to continue.
+
+(e) if two consecutive time-outs occur, i.e. genuine timeouts, and not
+replies with bad checksums, the time-out value is doubled, with 
+a maximum value of 30 seconds.  Once the maximum is  reached,  the  user  is 
+informed  that  the  communication  with the server appears to be lost,  and 
+waits for instruction to continue or exit. 
+
+(f) each time a valid response message is received,  the time-out value  for 
+the  next  request  is  set  to  two seconds longer than the time it took to 
+obtain the response. 
+
+The protocol described here was devised by the author, but is based on other 
+protocols,  e.g.  NFS,  which are  associated  with  stateless  servers  and 
+datagram communications. The retransmission time-out algorithm is
+crudely related to that employed in TCP and TP4. 
+
+In  August 1995 the client/server protocol was successfully tested between a 
+client in Australia and a server  in  Canada,  and  vice  versa.  It  worked 
+reliably,  albeit  rather  slowly,  which  is  not  too surprising given the 
+round-trip delays. Other internation trials have been carried out at
+later dates.
+
+
+APPENDIX C - JIS X 0212-1990 KANJI
+
+From V2.2 on XJDIC supports, as an option, the additional kanji of the 
+JIS X 0212-1990 standard. These notes are to assist users who which to 
+utilize this option.
+
+To use JIS212 kanji, you need to operate XJDIC inside a kterm which has been
+modified to support this set. A special patch to the X11/R6 kterm is 
+available which does this. The patch is available from several Japanese ftp
+sites. The .bdf font file for this character set is also required. This
+kterm version also supports Korean and Chinese codes, but will not support
+Japanese in Shift-JIS encoding.
+
+Internally XJDIC uses the EUC-3 coding to store and manipulate the JIS212
+characters. this is a 3-byte code with the first byte as 0x8F. XJDXGEN has
+been modified to generate the correct indices for this code.
+
+As part of the general support for the JIS212 kanji, the KANJD212 file
+of kanji information has been prepared. This file is in the same format as
+the main JIS208 KANJIDIC file.
+
+Since V2.3, XJDIC's kanji dictionary function has been extended to support 
+JIS212 kanji. To use it, concatenate the KANJIDIC and KANJD212 files
+into a single file, index it using XJDXGEN, and specify this larger file
+as the kanji dictionary file. In the display of kanji entries, JIS212
+kanji have their JIS and Kuten codes prefixed by "1-". There is no
+Shift-JIS code for a JIS212 kanji. When selecting a JIS212 kanji using
+the JIS or Kuten codes, key an "h" before the code.
+
+A small EDICT-format dictionary file: EDICTH, has been released, which 
+contains entries which contain JIS212 kanji.
+
+There are limited facilities for editing JIS212 kanji. I understand that 
+MULE handles these kanji, although I cannot confirm this. I have modified
+the "jstevie" vi-clone to handle EUC-encoded files containing JIS212
+kanji. At present I have no facilities for printing text with JIS212 kanji.
+

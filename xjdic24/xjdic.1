@@ -1,0 +1,588 @@
+.de Ap
+.PD 0
+.IP
+.PD
+..
+.de At
+.PP
+..
+.TH XJDIC 1 "MAY 2003" UNIX "XJDIC"
+.SH NAME
+XJDIC \- an  electronic  Japanese-English  dictionary  program (V2.4)
+
+.B NB:
+this man page contains a summary of the information in the 
+.B xjdic24.inf
+file.
+
+.SH SYNOPSIS
+
+.B xjdic [ options ]
+
+ - The 
+.B XJDIC
+stand-alone program, or client which allows a user to connect to the 
+.B xjdserver 
+via a network.
+
+.B xjdserver [ options ]
+
+ - The 
+.BR XJDIC 
+server, which carries out dictionary searches on behalf of clients.
+
+.B xjdxgen [ options ] dictionary_file
+
+ - creates the .xjdx index file for dictionary files.
+
+.SH DESCRIPTION
+.BR XJDIC 
+is an  electronic  Japanese-English  dictionary  program  designed  to operate  in  the  X11 window environment.  In particular,  it must run in an "xterm" environment which has Japanese language support such as provided by "kterm" or internationalized xterm, aixterm, etc.
+.PP
+It  is based on 
+.BR JDIC 
+and 
+.BR JREADER 
+which were developed to run under MS-DOS on
+IBM PCs or clones.
+.PP
+.BR XJDIC 
+functions as:
+.PP
+(a) an English to  Japanese  dictionary  (eiwa  jiten),  searching  for  and displaying entries for key-words entered in English;
+.PP
+(b)  a  Japanese  to  English  dictionary  (waei  jiten),  searching for and displaying entries for keywords  or  phrases  entered  in  Japanese  (kanji, hiragana or katakana);
+.PP
+(c)  a  Japanese-English  Character  dictionary  (kanei  jiten),  capable of selecting kanji characters by JIS code, radical, stroke count,  Nelson Index number or reading, and displaying compounds containing that kanji.
+.PP
+.BR XJDIC 
+is typically run in a window of its own.  The user can then use it as a free-standing on-line dictionary.  It can also be  used  as  an  accessory when  reading  or  writing  text  in  another window (e.g.  reading the "fj" Japanese news groups.) Strings of text,  either English or Japanese,  can be moved to and from 
+.BR XJDIC 
+using X11's mouse "cut-and-paste" operations.
+.PP
+All the Japanese displayed by XJDIC is in kana and kanji,  so if you  cannot read  at least hiragana and katakana,  this is not the program for you.  The author has no intention whatsoever of producing a  version  using  romanized Japanese.
+
+.SH COMMAND LINE OPTIONS
+Each option begins with a separate "-" identifier. Options are tagged:
+CL, SA or SV according to whether they are applicable to the Client,
+Stand-alone or Server versions. Many of the options can also be set in
+the 
+.B .xjdicrc
+file.
+
+.BR -h 
+[CL,SV,SA]
+.Ap
+display list of options and exit.
+.At
+.B -E 
+[CL,SA]
+.Ap
+instruct the program that it is in EUC mode, and refrain from
+interpreting
+the 3-byte kanji of the JIS X 0212 set, which starts with a hex 8F, as 
+Shift-JIS.
+
+.At
+.B -v 
+[CL,SA]
+.Ap
+disable the verb de-inflection function.
+
+.At
+.B -V 
+[CL,SA]
+.Ap
+disable the use of reverse-video in the display of matches.
+
+.At
+.B -c control_file 
+[CL,SV,SA]
+.Ap
+specify the path and name of a control file to be used instead of the
+default ".xjdicrc" file.
+
+.At
+.B -d dictionary_file 
+[SV,SA]
+.Ap
+specify a dictionary file to use (up to 9 may be specified.)
+
+.At
+.B -k kanji_file 
+[SV,SA]
+.Ap
+specify a kanji data file to use.
+
+.At
+.B -j j/e/s 
+[CL,SA]
+.Ap
+Specify the output coding for Japanese text (j=JIS, e=EUC, s=Shift-JIS)
+
+.At
+.B -P port_no 
+[CL,SV]
+.Ap
+instruct the client/server version to use UDP port nnnnn,  instead of
+the default  port  (47512).
+
+.At
+.B -S server_address 
+[CL]
+.Ap
+instruct the client that the server is  to  be  found  at  the
+specified network  address.
+
+.At
+.B -C clipboard_file 
+[CL,SA]
+.Ap
+the name of the file to use as the clipboard.
+
+.At
+.B -K 
+[SV]
+.Ap
+prevent  the  server  from  establishing  itself  as  a  daemon.
+
+
+.SH KEYBOARD COMMANDS
+.B XJDIC
+operates by entering text strings of English or Japanese, upon which the
+matching dictionary entries are displayed. As well, a range of
+single-character control commands are available to modify the program
+operation.
+
+The commands are:
+
+.B ?
+.Ap
+display a summary of the keyboard commands
+.At
+
+.B !
+.Ap
+display the GNU GPL document.
+.At
+
+.B #
+.Ap
+engage the romaji to katakana conversion feature for the subsequent
+input.
+.At
+
+.B @
+.Ap
+engage the romaji to hiragana conversion feature for the subsequent
+input.
+.At
+
+.B &
+.Ap
+toggle kana-input mode.
+.At
+
+.B /
+.Ap
+toggle  the display jukugo with a kanji in a non-initial position mode.
+.At
+
+.B \e\ 
+.Ap
+go into kanji dictionary mode (see below.)
+.At
+
+.B |
+.Ap
+toggle unedited output mode.
+.At
+
+.B =
+.Ap
+switch the active dictionary to the next in the list.
+.At
+
+.B ^
+.Ap
+switch the active dictionary to the previous one in the list.
+.At
+
+.B _
+.Ap
+select an active dictionary by number.
+.At
+
+.B $
+.Ap
+specify a list of dictionary numbers to use in global-search mode.
+.At
+
+.B %
+.Ap
+toggle global search mode.
+.At
+
+.B `
+.Ap
+toggle multiple dictionary display within global search mode.
+.At
+
+.B *
+.Ap
+display buffer-usage statistics (only for the stand-alone version with
+paged I/O)
+.At
+
+.B [
+.Ap
+toggle exact-match mode.
+.At
+
+.B }
+.Ap
+toggle reverse-video display of matched strings mode.
+.At
+
+.B +
+.Ap
+toggle selection of priority keys in the dictionary.
+.At
+
+.B ]
+.Ap
+initiate search of the extension file (none available yet!).
+.At
+
+.B '
+.Ap
+clear the current one-off filter (if any) and prompt for another.
+.At
+
+.B ;
+.Ap
+set/clear general filters (as specified in the control file.)
+.At
+
+.B {
+.Ap
+enter clipboard mode (all search keys will now be taken from the
+clipboard file.)
+.At
+
+.B :
+.Ap
+toggle verb-deinflection mode
+.At
+
+.B -
+.Ap
+toggle long kanji display mode.
+.At
+
+.SH Kanji Search Mode
+Kanji Search Mode is entered using the `\' command. In this mode, keys
+are entered which match against fields in the Kanji database.
+
+The keys are:
+
+.B kana
+.Ap
+(use the @ or # prefixes to key hiragana or katakana.)
+.At
+
+.B jxxxx
+.Ap
+a hex JIS code for a kanji
+.At
+
+.B jhxxxx
+.Ap
+a hex JIS code for a kanji from the JIS X 212-1990 supplementary kanji.
+.At
+
+.B jknnnn
+.Ap
+a numeric
+.B kuten
+code for a kanji.
+.At
+
+.B jknnnn
+.Ap
+a numeric
+.B kuten
+code for a kanji from the JIS X 212-1990 supplementary kanji.
+.At
+
+.B jsxxxx
+.Ap
+a hex Shift-JIS code for a kanji.
+.At
+
+.b c
+followed by one of the 
+.B KANJIDIC
+codes, such as Snn, Bnn, Vnnnn, etc.
+.At
+
+.B m
+.Ap
+followed by the English "sense" or "meaning" of the kanji.
+.At
+
+.B r
+.Ap
+to initiate a display of the radicals and their numbers.
+.At
+
+.B l
+.Ap
+to enter the multi-radical selection mode.
+.At
+
+.SH Multi-Radical Mode
+This is a sub-mode with the kanji selection mode. Radical elements are 
+entered, and the kanji which match that combination of elements are
+either displayed, or their number reported.
+
+The commands in the mode are:
+
+.B r
+.Ap
+display the table of radical elements
+.At
+
+.B radical
+.Ap
+add this element to the table.
+.At
+
+.B dn
+.Ap
+remove the nth element from the table.
+.At
+
+.B sn
+.Ap
+restrict the selection to kanji with n strokes
+.At
+
+.B s-n
+.Ap
+restrict the selection to kanji with <= n strokes
+.At
+
+.B s+n
+.Ap
+restrict the selection to kanji with >= n strokes
+.At
+
+.B s0
+.Ap
+remove the kanji stroke restriction.
+.At
+
+.B c
+.Ap
+clear the elements in the table
+.At
+
+.B l
+.Ap
+force the display of currently matching kanji
+.At
+
+.B v kanji
+.Ap
+display the elements of the specified kanji
+.At
+
+.B x
+.Ap
+exit this mode.
+.At
+
+.SH CONTROL FILE
+Configuration of the XJDIC system is accomplished via the use of the
+.BR .xjdicrc(1) 
+file, or the file specified in the 
+.B -c 
+option.
+
+The control-file contains a number of directives which establish the
+working dictionaries and files, and also set some of the operating
+modes.
+
+The control file directives are:
+
+.B filt 
+[SA,CL] 
+.Ap
+set up filter details (see the FILTERS section in the xjdic24.inf file.) 
+.At
+
+.B omode e/j/s 
+[SA,CL]
+.Ap
+set the screen output codes to EUC, JIS or Shift-JIS 
+.At
+
+.B kanamode 
+[SA,CL]
+.Ap
+set the initial default input mode to hiragana
+.At
+
+.B dicdir path_name 
+[SA,SV,CL]
+.Ap
+set the location of the dictionary and data files. The
+program will try this directory first, followed by the
+local operating directory. Affects all files except the
+clipboard and the control file itself.  Note that this
+line should occur *before* any dicfile, etc. lines.
+.At
+
+.B dicfile path_name 
+[SA,SV]
+.Ap
+dictionary name (default: edict) 
+.At
+
+.B kdicfile path_name 
+[SA,SV] 
+.Ap
+kanji dictionary name (default: kanjidic) 
+.At
+
+.B romfile path_name 
+[SA,CL] 
+.Ap
+romaji conversion file (default: romkana.cnv) 
+.At
+
+.B verbfile path_name 
+[SA,CL] 
+.Ap
+conjugation file (default: vconj) 
+.At
+
+.B radfile path_name 
+[SA,CL] 
+.Ap
+radical/bushu no. file (default: radicals.tm) 
+.At
+
+.B radkfile path_name 
+[SA,CL] 
+.Ap
+radical/kanji file for the multi-radical search
+(default: radkfile) 
+.At
+
+.B jverb on|off 
+[SA,CL] 
+.Ap
+enable or disable the verb de-inflection function 
+.At
+
+.B kdnoshow ABCDE... 
+[SA,CL] 
+.Ap
+declaration of the KANJIDIC fields to be suppressed from the 
+display. For example, "kdnoshow YMQ" will prevent the 
+display of the Pin-Yin information and the Four-Corner and 
+Morohashi indices. 
+.At
+
+.B exlist and from but .... .... 
+.Ap
+declaration of common words of 3 or more letters to be 
+excluded from the XJDXGEN generation of an .xjdx file. 
+There can be more than one "exlist" line in the file. 
+.At
+
+.B clipfile 
+[SA,CL]
+.Ap
+specify the name of a clipboard file to use.
+.At
+
+.B gnufile 
+[SA,CL]
+.Ap
+specify the name of GNU Public Licence file (default is
+"gnu_licence".)
+.At
+
+.B rvdisplay on | off 
+[SA,CL]
+.Ap
+specify the initial setting of the reverse video
+display of matches. (Default is ON)
+.At
+
+Note that some of these are also command-line options. If both are used, 
+the control-file request takes precedence. 
+
+.SH FILES
+
+Apart from the .xjdicrc control file, 
+.B XJDIC 
+requires five other files: 
+
+.B radicals.tm  
+.Ap
+the list of bushu numbers and descriptive kanji
+.At
+              
+.B romkana.cnv 
+.Ap
+the list  of  romaji  to  kana  mappings  used  in  the  input conversion routines. 
+.At
+
+.B vconj 
+.Ap
+the verb/adjective inflections used to identify the dictionary forms of words prior to lookup. 
+.At
+
+.B radkfile  
+.Ap
+the  file  of  radicals  used in the multi-radical kanji search function, and the kanji matching each radical. 
+.At
+
+.B kanjstroke 
+.Ap
+file of kanji  and  their  stroke-counts,  extracted  from  the kanjidic file. 
+.At
+
+
+.SH ENVIRONMENT
+The file
+.BR .xjdicrc(1) 
+defines the locations of the files above.  The programs all seek this
+file in the current working directory, the HOME directory, or in the
+directory specified by the XJDIC environment variable.
+
+.SH INPUT METHOD
+As well as having its own romaji conversion facility, 
+.B XJDIC
+can receive Japanese input from IM systems such as 
+.B kinput2.
+
+.SH BUGS
+Any spotted should be sent to the author.
+
+.SH AUTHOR
+Jim Breen <jwb@dgs.monash.edu.au>. This man page initially created by
+William F. Maton <wmaton@enterprise.ic.gc.ca> with material taken from
+xjdic24.inf, and extended by Jim.
+
+.SH ACKNOWLEDGMENTS
+Many, many people have assisted with 
+.B xjdic
+since it first appeared as 1.0 in 1992. They are mentioned in the
+.B xjdic24.inf
+file.
+

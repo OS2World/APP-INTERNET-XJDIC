@@ -1,0 +1,21 @@
+
+                             W H A T ' S   N E W
+
+                                  XJDIC V2.4
+                                  ==========
+
+These are just a few notes on changes introduced in V2.4 of xjdic.  
+Make sure you  read  the xjdic24.install document,  and preferably 
+also the xjdic24.inf document before installing and running V2.4. 
+
+These notes assume some familiarity with earlier versions of xjdic.
+
+In fact very little has changed in V2.4.  A few bugs were fixed, and one
+new feature, namely the display of multiple results in a
+multi-dictionary lookup, was added. One bug-fix was to re-instate a 
+feature that was accidently dropped out in the V2.2 -> V2.3 update.
+(Only one user noticed....)
+
+Jim Breen
+May 2003
+

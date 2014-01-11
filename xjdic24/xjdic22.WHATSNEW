@@ -1,0 +1,133 @@
+
+                             W H A T ' S   N E W
+
+                                  XJDIC V2.2
+                                  ==========
+
+These are just a few notes on changes introduced in V2.0, 2.1 & 2.2 of xjdic.  
+Make sure you  read  the xjdic22.install document,  and preferably also the 
+xjdic22.doc document before installing and running V2.2. 
+
+These notes assume some familiarity with V1.0 and/or V1.1 of xjdic.
+
+V2.2 of xjdic is a relatively minor upgrade mainly to enable handling of the 
+kanji of the JIS X 0212-1990 set, and to introduce the global (simultaneous)
+search of several dictionaries.
+
+The key points of introduced in V2.0 to 2.2 are: 
+                       
+A.  A slightly better distribution format,  with a makefile and  an  expanded 
+installation guide. 
+                         
+B.  compile-time  options  to produce either a single stand-alone program (as 
+was the case with V1.0 and 1.1) or a client/server pair. The client/server
+option is very useful if several users on the one site use xjdic.
+
+C. User definable filter. 
+
+The _'_ key triggers a request for a string which will be used  as  a  filter 
+for all following dictionary searches. Only entries which contain that string 
+will be displayed. The string can be kanji, kana or ASCII. Pressing _'_ again 
+clears the filter. 
+
+D. Field suppression in kanjidic displays. 
+
+The "kdnoshow" directive in the .xjdicrc  file  enables  selected  fields  in 
+kanjidic to be supressed. 
+
+My  .xjdicrc  contains:  kdnoshow  YELUQMKZ,  as  I  rarely need to see these 
+fields. 
+
+E. Priority Fields for ASCII (English) search keys. 
+
+This is part of a longer-range project to make JDIC/xjdic more  useful  as  a 
+E->J dictionary. I am planning to prepend the most important English words in 
+a selection of main entries in EDICT with a "@" character, e.g.  "UCHI [uchi] 
+/@house/" 
+
+_+_   toggles   the   English   search   between  all_strings  and  priority_ 
+strings_only. 
+
+"priority" words will display in reverse video. 
+ 
+F. Short-form kanji display.
+
+The "-" command toggles a short-form kanji display mode on and off.  When  in 
+the short-form mode, a kanji search which results in more than one match will 
+produce  a  display  of  just the kanji that match,  without any of the other 
+details.  This appears as a block of kanji, sorted by stroke count and bushu. 
+If  only  one  kanji  matches  the  search  criterion,  the long-form display 
+results. 
+         
+G. Automatic Window-size detection
+
+xjdic now detects the number of rows and columns available in the kterm/xterm 
+window,  and  stops  a  multi-line  display  before  it  exceeds  a  complete 
+screen-full.  It  will  prompt  for continuation of the display.  It now also 
+folds long lines on a white-space between words. 
+
+H. Raw EDICT display mode
+
+The _|_ command toggles the "raw  output"  mode.  In  this  mode,  the  EDICT 
+entries  are  displayed  without any reformatting.  This mode is particularly 
+useful when one is preparing corrections and updates for the EDICT file. 
+
+I. The EDICT Extension File.
+
+This release of xjdic supports access to the EDICT Extension  file.  The  _]_ 
+command triggers a prompt for the desired keyword for for the Extension file, 
+and xjdic will then display the matching Extension entry. 
+                                                                            
+J. Exact Match mode      
+
+Normally xjdic displays the  best  possible  matches  with  the  search  key, 
+starting  with  the  longest.  The  _[_  command toggles on and off an "exact 
+match" mode,  which will force the display to show only those  entries  which 
+fully match the search key. 
+
+K. Multiple Dictionary files.
+
+The feature introduced in V1.1 enabling an alternative  dictionary  has  been 
+replaced  with  the  capability  od having up to 9 dictionary files.  The "=" 
+command now cycles around the available dictionaries, and the new "_" command 
+prompts for a dictionary selection. 
+
+L. Extra Bushu Option.
+
+It is now possible to cut a kanji from the "\r" bushu display into the  "\cb" 
+prompt, instead of typing the bushu number. 
+
+M. Exclusion Words
+
+The list of words for exlusion from the index is now in the .xjdicrc file.
+
+N. Kana Input Mode
+
+It is now possible to make hiragana to default input mode. The "kanamode"
+directive in the .xjdicrc file makes xjdic start in this mode, and the _&_
+command taggles it on and off.
+
+O. Ctrl-Z & Ctrl-D
+
+The program now responds to Ctrl-Z (suspend) and Ctrl-D (exit) commands.
+The former "bye" command is still supported.
+
+P. Demand-Paging
+
+The compile time option of using demand-paging of the dictionary & index files
+instead of holding them in RAM.
+
+Q. Multi-Radical Kanji Selection
+
+Michael Raines' wonderful multi-radical kanji selection system.
+
+R. JIS X 0212-1990 Support
+
+Support for the additional 5,801 kanji in the JIS X 0212-1990 standard.
+
+S. Global Searches
+
+Facility to request a search of several dictionary files.
+
+Jim Breen 
+June 1996

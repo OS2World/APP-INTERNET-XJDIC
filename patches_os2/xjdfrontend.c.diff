@@ -1,0 +1,118 @@
+45a46,47
+> /* __EMX__ is automatically defined by the OS/2 GCC compiler */
+> #ifndef __EMX__
+47c49
+< 
+---
+> #endif
+87a90
+> #ifndef __EMX__
+88a92
+> #endif
+135a140,142
+> #ifdef __EMX__
+> "~~! display gnu licence",
+> #else
+136a144
+> #endif
+166a175,181
+> #ifdef __EMX__
+> /* This is a rather clumsy hack to replace ungetc(), which won't work the
+>  * way we've had to implement getcharxx() on OS/2.
+>  */
+> unsigned char emx_charbuf=0;
+> #endif
+> 
+285a301,317
+> #ifdef __EMX__
+>         /* OS/2's getchar() annoyingly won't return until Enter is pressed,
+>          * which rather breaks the way XJDIC works.  So we have to do it
+>          * slightly differently...
+>          */
+>         int _rk;
+>         if (emx_charbuf) {
+>             _rk = emx_charbuf;
+>             emx_charbuf = 0;
+>         }
+>         else {
+>             _rk = _read_kbd(0,1,0);
+>             /* Discard extended keycodes (but clear the buffer first) */
+>             if (_rk == 0) _read_kbd(0,1,0);
+>         }
+>         return(_rk);
+> #else
+286a319
+> #endif
+320a354
+> #ifdef WINSIZE_IOCTL_AVAILABLE
+328a363
+> #endif
+432a468,470
+> #ifdef __EMX__
+>   while ((c != 0x0a) && (c != 0x0d))      /* loop until Enter is pressed   */
+> #else
+433a472
+> #endif
+641a681,683
+> #ifdef __EMX__
+>         Test = MaxX-1;  /* to prevent bogus blank lines under OS/2 */
+> #else
+642a685
+> #endif
+1853a1897,1922
+> /*=========GetLitStr=== scanf replacement for OS/2 KShell systems ============*/
+> /* This function is basically a simplified GetKBStr without the conversion    *
+>  * logic (because it's only used when literal ASCII input is required).       *
+>  * [-- 2006-06-08 Alex Taylor]                                                */
+> 
+> void GetLitStr( unsigned char *prompt )
+> {
+>     int i = 0;
+>     unsigned char c = 0;
+> 
+>     while (( c != 0x0a ) && ( c != 0x0d )) {    /* loop until Enter is pressed */
+>         if ( i >= 254 ) continue;               /* sanity check for buffer */
+>         instr[ i+1 ] = 0;
+>         c = getcharxx();
+>         if (( c == 0x7f ) || ( c == 8 )) {      /* handle backspace */
+>             if ( i > 0 ) instr[ --i ] = 0;
+>             i--;
+>         } else {
+>             instr[ i ] = c;
+>         }
+>         printf("\r                                       \r");
+>         printf("%s%s%s %s", RVon, prompt, RVoff, instr );
+>         i++;
+>     }
+> }
+> 
+1863a1933,1936
+> #ifdef __EMX__
+>     /* OS/2 KShell doesn't like scanf for some reason, so we do this instead: */
+>     GetLitStr("JIS CODE:");
+> #else
+1866a1940
+> #endif
+2587a2662,2666
+> #ifdef __EMX__
+>     /* Default to SJIS under OS/2 */
+>     Omode = 2;
+> #endif
+> 
+2863a2943
+> #ifndef __EMX__
+2872a2953
+> #endif
+3135a3217,3220
+> #ifdef __EMX__
+>                     /* OS/2 KShell doesn't like scanf for some reason, so we do this instead: */
+>                     GetLitStr("MEANING:");
+> #else
+3138a3224
+> #endif
+3164a3251,3253
+> #ifdef __EMX__
+>                     emx_charbuf = c;
+> #else
+3165a3255
+> #endif

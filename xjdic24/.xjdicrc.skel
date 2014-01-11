@@ -1,0 +1,33 @@
+#
+#	Sample .xjdicrc file
+#
+#	(remove comments from lines below if you want to activate the 
+#	option)
+#
+#	server	(default is localhost)
+# server daneel.dgs.monash.edu.au
+dicdir	/home/jwb/nihongo/dics
+kdicfile	kanjidic_b
+# note that I use "kanjidic_b", because I have joined the kanjidic &
+# kanjd212 files
+#	dicfile	(default is edict alone)
+dicfile edict
+dicfile jddict
+dicfile compdic
+#	kdnosho	(no default)
+kdnoshow YELUQMKZ
+#	filt	(no defaults)
+#
+#	I don't use these filters, now that names have been moved
+#	to the ENAMDICT file
+#filt 0 2 off "Exclude proper names" (pl, (pn pl) pn)
+#filt 1 1 off "Exclude all place names" (pl, pl)
+#filt 2 1 off "Exclude all person names"  (pn pn)
+#filt 3 0 off "Show only person names" (pn pn)
+#filt 4 0 off "Show only place names" (pl, pl)
+#filt 5 0 off "Show only place & person names" (pl, (pn pl) pn)
+#	extfile	(default is edictext)
+#extfile edictexx
+#	exlist (no default excluded words for xjdxgen)
+exlist abbr col vul vulg then and conj int pron pref suf syn ant from 
+exlist adv adj hon hum pol jap japanese

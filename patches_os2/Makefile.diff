@@ -1,0 +1,48 @@
+34c34
+< #	under Ultrix. It works with Solaris and Linux.
+---
+> #	under Ultrix or OS/2. It works with Solaris and Linux.
+40a41,42
+> TLIBS= -lcurses -ltermcap
+> #
+56a59,63
+> #   For OS/2, use the following instead:
+> #
+> LIBS= -lsocket
+> LNKOPT= -Zexe
+> #
+67c74
+< 	$(CC) $(JDXOBJECTS) -o xjdxgen
+---
+> 	$(CC) $(JDXOBJECTS) $(LNKOPT) -o xjdxgen
+75c82
+< 	$(CC) $(EJDXOBJECTS) -o exjdxgen
+---
+> 	$(CC) $(EJDXOBJECTS) $(LNKOPT) -o exjdxgen
+82,83c89,90
+< #SACFLAGS = -DXJDFRONTEND -DXJDDIC -DDEMAND_PAGING
+< SACFLAGS = -DXJDFRONTEND -DXJDDIC -DMMAP
+---
+> SACFLAGS = -DXJDFRONTEND -DXJDDIC -DDEMAND_PAGING
+> #SACFLAGS = -DXJDFRONTEND -DXJDDIC -DMMAP
+86c93
+< 	$(CC) $(SAOBJECTS) -o xjdic_sa
+---
+> 	$(CC) $(SAOBJECTS) $(TLIBS) $(LNKOPT) -o xjdic_sa
+102c109
+< 	$(CC) $(CLOBJECTS) $(LIBS) -o xjdic_cl
+---
+> 	$(CC) $(CLOBJECTS) $(LIBS) $(TLIBS) $(LNKOPT) -o xjdic_cl
+114,115c121,122
+< #SVCFLAGS = -DXJDDIC -DXJDCLSERV -DDEMAND_PAGING
+< SVCFLAGS = -DXJDDIC -DXJDCLSERV -DMMAP
+---
+> SVCFLAGS = -DXJDDIC -DXJDCLSERV -DDEMAND_PAGING
+> #SVCFLAGS = -DXJDDIC -DXJDCLSERV -DMMAP
+118c125
+< 	$(CC) $(SVOBJECTS) $(LIBS) -o xjdserver
+---
+> 	$(CC) $(SVOBJECTS) $(LIBS) $(LNKOPT) -o xjdserver
+130a138,139
+> cleanos2: realclean
+> 	if exist *.exe del *.exe

@@ -1,0 +1,13 @@
+39a40,42
+> #ifdef __EMX__
+> int DontFork = TRUE;
+> #else
+40a44
+> #endif
+187a192
+> #ifndef __EMX__
+189c194,195
+< 				printf("\t -P nnnn (use UDP port nnnn\n");
+---
+> #endif
+> 				printf("\t -P nnnn (use UDP port nnnn)\n");

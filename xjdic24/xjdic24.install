@@ -1,0 +1,280 @@
+X J D I C V2.4 
+
+INSTALLATION GUIDE 
+
+INTRODUCTION 
+
+xjdic is  an  electronic  Japanese-English  dictionary  program  designed  to 
+operate  in  a  windowed environment with Japanese font support,  such as X11 
+with kterm/kinput2. It is based on JDIC & JREADER which were developed to run 
+under MS-DOS on IBM PCs or clones. 
+
+Starting with V2.2, xjdic supports kanji from the JIS X 0212-1990 set. To
+handle these kanji, you will need a suitable environment, such as kterm 
+6.2.2.
+
+See the document xjdic24.inf for general information. 
+
+DISTRIBUTION 
+
+The xjdic distribution is in the file xjdic24.tar.gz (or xjdic24.tgz). This 
+contains: 
+
+       .xjdicrc.skel
+       Makefile
+       xjdic24.inf
+       xjdic24.WHATSNEW
+       xjdic23.WHATSNEW
+       xjdic22.WHATSNEW
+       xjdic24.install
+       xjdic.h
+       xjdclient.c
+       xjdcomm.c
+       xjdfrontend.c
+       xjdsa.c
+       xjdservcomm.c
+       xjdserver.c
+       xjdxgen.c
+       exjdxgen.c
+       xjdrad.c
+       makekanjstroke.c
+       vconj
+       romkana.cnv
+       radicals.tm
+       radkfile
+       kanjstroke
+       gnu_licence
+       xjdic.1
+
+In  addition,  you  will  need  to  obtain  the  Japanese/English  and  Kanji 
+dictionary  files  (edict and kanjidic).  These are distributed separately as 
+they are continuously being updated. The master distribution site is the ftp
+directory /pub/nihongo on ftp.cc.monash.edu.au, but there are also mirrors
+in several other countries. You can also obtain other dictionary files
+such as: enamdict (Japanese names), compdic (computing & telecomms
+terms), ediclsd3 (bio-medical terms), etc, etc.
+
+If you are using the supplementary kanji from the JIS X 0212-1990 set, you
+may like to obtain the kanjd212 file. It can be used by adding its
+information to the kanjidic file, making a single large file. (I do this
+and call the combined file "kanjidic_b".)
+
+There is no directory structure included with the programs on the xjdic24.tar 
+file,  as it is left up to users how this aspect of the  installation  is  to 
+proceed.  Some users install the xjdic binaries locally, e.g. on ~/bin, while 
+others have them installed more centrally, e.g. in /usr/local/bin. 
+
+INSTALLATION PROCEDURE 
+
+xjdic  V2.4  can  operate  as  a  single, stand-alone program, or as  a 
+client/server  pair. (The stand-alone version requires the installation of the
+whole distribution, whereas the client accesses the dictionary information
+from the server in the client/server version.)  The module that searches the 
+dictionary files, i.e. the stand-alone program or the server, can operate
+holding all the files in RAM, use memory-mapped i/o, or can use a dynamic 
+demand-paging system. The following  procedure describes  the  most  simple 
+installation, suitable for a user installing the package for personal use. 
+
+(a) create a directory for holding the xjdic files, e.g. "mkdir xjdic" 
+    
+(b) decompress and untar the files from the archive. For example the following 
+may be used: 
+
+	gzip -d xjdic24.tar.gz
+	tar xvf xjdic24.tar
+
+(c) choose where you are going to locate the dictionary and data files.
+(I use a directory called "dics" for this.) 
+
+(d)  obtain and decompress at least the EDICT and KANJIDIC files in the data
+directory. Move the gnu_licence, radicals.tm, vconj, kanjstroke, radkfile and 
+romkana.cnv files to the same directory.  You may also add to this directory 
+any other dictionary files, such as the ENAMDICT and COMPDIC.
+
+(e) make any modifications necessary  to  the  compilation  settings  in  the 
+makefile.  The comments in the file itself indicate some of these options. As 
+distributed, the software should be suitable for most Unix variants. 
+
+(f) create the binaries as follows: 
+
+        make stand              (stand-alone version. If you are going
+				to use the client/server version, you
+				need to do "make client" and "make
+				server" instead.)
+        make xjdxgen            (program to index the dictionary files)
+        make clean              (removes the compilation object files)
+
+(You can use the GNU compiler by  invoking  gmake  instead  of  make,  or  by 
+running make with the "CC=gcc" command-line option.) 
+
+This will have created the binary program files "xjdxgen" and either 
+"xjdic_sa" or the "xjdic_cl" and "xjdserver" pair. Depending on
+whether you wish to run a stand-alone version, or the client/server
+version, rename either "xjdic_sa" or "xjdic_cl" simply "xjdic".
+
+(g)  arrange  for  the binary files to be accessed for execution.  This could 
+mean: 
+
+        (i)   moving them to a directory like ~/bin. If you are
+        (ii)  placing symbolic links to the files in the current directory
+        (iii) executing them directly in the current directory.
+              
+(h) create the .xjdx index files for the dictionary files: 
+
+        xjdxgen /pathname/edict
+        xjdxgen /pathname/kanjidic
+        etc.
+
+xjdxgen has a single command-line argument:  the name of the dictionary  file 
+for which it is generating an index. It defaults to "edict". 
+
+(i)  create  a  .xjdicrc  file  according  to  taste.  This  may have entries 
+designating the identities and locations of the dictionary and  data  files. 
+Perhaps the best option is to set the "dicdir" directive pointing at the
+location of your dictionary and data files (I have the line "dicdir dics" for 
+this purpose.) A sample  file, .xjdicrc.skel is included in the distribution. 
+
+(j) if the user(s) want to have the  facility  to  match  against  dictionary 
+entries which do not yet have English translations, obtain the wsktok.Z file, 
+unpack it to get the wsktok.dat file. Run xjdxgen to produce wsktok.dat.xjdx, 
+and specify it as the alternative dictionary,  either in the command line, or 
+in the .xjdicrc file. 
+
+(k) copy the "man" page (xjdic.1) to /usr/man/man1 or wherever your
+system has such files.
+
+That is about it.  If you have trouble with the  compilation,  feel  free  to 
+fiddle with the code (sorry about the relative lack of comments), and send me 
+details  of  what  you  had to do.  Don't be too critical of the program:  it 
+shows a lot of scars from its port from the MS-DOS/Borland Graphics original, 
+and I wrote while I was still teaching myself C. 
+
+CLIENT/SERVER OPTION 
+
+In the client/server option,  the dictionary search software is operated in a 
+separate  program  which  operates  in  the  background  as  a  daemon.   The 
+user-oriented front-end functions are  in  a  separate  client  program  which 
+communicates  with  the  server  using  the  UDP/IP  Internet  communications 
+protocols.  Thus it is possible to have the client  and  server  programs  on 
+different machines, even (the mind boggles) in different countries. 
+
+A  typical  use  of  the  client/server  mode  of operation is when there are 
+several xjdic users in the one organization,  as it saves having to  run  the 
+large dictionary-search process on more than one workstation. 
+
+Compilation of the client and server programs is achieved by:
+
+        make client
+        make server
+        make clean
+                 
+The same UDP port number must be used by both programs.  The default is 47512 
+(the author's DOB),  but another default can be  set  in  the  xjdic.h  file. 
+Alternatively  the  port  number  can  be  set in the .xjdicrc file or on the 
+command-line. 
+
+The same .xjdicrc file can be used by both the client  and  server  programs, 
+although  the installer may want to have separate versions.  The main special 
+directive is the "server" specification, e.g. 
+
+        server daneel.dgs.monash.edu.au 
+
+which must be in the .xjdic file used by the  client  to  tell  it  the  host 
+address of the server. If this is not present, it defaults to "localhost". 
+
+DICTIONARY ACCESS METHOD
+
+There is a compilation-time option to specify whether the module that 
+searches the dictionary files, i.e. the stand-alone program or the server: 
+
+(a) holding all the dictionary files and index files in RAM;
+(b) operating a demand-paging mechanism on these files;
+(c) accessing the files directly using memory-mapped I/O.
+
+The first obviously takes more RAM and swap space, but will usually execute 
+more quickly on a system with plenty of RAM, whereas the latter two may
+run more slowly but will coexist more easily with other programs and will run 
+on smaller configurations.
+
+The demand-paging method was the default until V2.3, when memory-mapped
+became the dafault. With demand-paging, the size of the page
+buffers (VBUFFSIZE default 4096) and the number of page buffers (NOVB default 
+1000) set in the xjdic.h file. To modify either of these, amend the #define 
+lines in that file. To turn off demand-paging, compile without the 
+-DDEMAND_PAGING option in the Makefile.
+
+XJDXGEN 
+
+xjdxgen  is  a utility program that parses the dictionary file and produces a 
+file <dictionary-name>.xjdx containing the index table (see  below).  If  you 
+make  any  changes  to the dictionary,  you must run xjdxgen before operating 
+xjdic again.  
+
+xjdxgen stores the length of the dictionary file and the xjdic version in the 
+.xjdx file, and if xjdic detects a mismatch, it will refuse to operate.  This 
+ensures that xjdxgen is run every time the dictionary is modified. 
+
+The index table generated by xjdxgen contains a long  integer  entry  marking 
+the  starting  byte  of  each  "word"  in  the  dictionary,  and is sorted in 
+alpha/kana/JIS order of the "words"  indexed.  This  enables  a  fast  binary 
+search  to be done,  and for the display to be in alphabetical/etc.  order by 
+keyword.  The "words" indexed by xjdxgen are defined as any sequence  of  one 
+or more kana characters,  any occurrence of a kanji character or any sequence 
+of three or more ascii alphabetic or numeric characters.  Common words  like: 
+"of", "to", "the", etc.  and grammatical terms like:  "adj", "vi", "vt", etc. 
+are not indexed.  Words  encapsulated  in  braces  ({...})  are  not  indexed 
+either. 
+
+XJDRAD
+
+The xjdrad.c program is available for users who wish to maintain a display in
+a seperate window of the radicals used in the multi-radical kanji lookup 
+sub-system.
+
+MAKEKANJSTROKE
+
+Supplied with the distribution is the "kanjstroke" file, which is an extract 
+from the master KANJIDIC file of the stroke-counts. It is used in conjunction
+with the multi-radical kanji lookup sub-system. The makekanjstroke.c program
+is also supplied in case a user wishes to regenerate the "kanjstroke" file.
+
+
+Jim Breen 
+School of Computer Science & Software Engineering
+Monash University 
+Melbourne, Australia 
+(jwb@csse.monash.edu.au) 
+May 2003
+
+APPENDIX - MODULE & FILE MAP
+
+The following is a map of the modules in the various binaries;
+
+				STAND-ALONE	CLIENT		SERVER
+
+xjdic.h				    Y		  Y               Y
+
+xjdfrontend.c 			    Y             Y               N
+xjdsa.c				    Y		  N               N
+xjdcomm.c (xjdicrc & stringcomp)    Y             Y               Y
+xjdservcomm.c (DicSet, dbchar, etc) Y		  N		  Y
+xjdserver.c			    N		  N		  Y
+xjdclient.c			    N		  Y		  N
+
+and the following indicates which files are needed at run-time.
+
+				STAND-ALONE	CLIENT		SERVER
+
+.xjdicrc                            Y             Y               Y
+
+edict, edict.xjdx (& others)        Y             N               Y
+kanjidic, kanjidic.xjdx             Y             N               Y
+romkana.cnv                         Y             Y               N
+radicals.tm                         Y             Y               N
+vconj                               Y             Y               N
+radkfile                            Y             Y               N
+kanjstroke                          Y             Y               N
+clipboard                           Y             Y               N
+edictext, edictext.xjdx (*)         Y             Y               N
+(* this file is not yet available.)
+gnu_licence                         Y             Y               N

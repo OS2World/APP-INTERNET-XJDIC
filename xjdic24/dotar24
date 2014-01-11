@@ -1,0 +1,7 @@
+#
+rm -f xjdic24.tar
+rm -f xjdic24.tar.gz
+rm -f xjdic24.tgz
+tar cvf xjdic24.tar dotar24 .xjdicrc.skel Makefile xjdic24.inf xjdic24.WHATSNEW xjdic23.WHATSNEW xjdic22.WHATSNEW xjdic24.install xjdic.h xjdclient.c xjdcomm.c xjdfrontend.c xjdsa.c xjdservcomm.c xjdserver.c xjdxgen.c exjdxgen.c xjdrad.c makekanjstroke.c vconj romkana.cnv radicals.tm radkfile kanjstroke gnu_licence xjdic.1
+gzip -9 xjdic24.tar
+mv xjdic24.tar.gz xjdic24.tgz
